@@ -4,7 +4,6 @@
 
 ## Objective
 
-Objectives
 Analyze the distribution of content types (movies vs TV shows).
 Identify the most common ratings for movies and TV shows.
 List and analyze content based on release years, countries, and durations.
@@ -12,8 +11,10 @@ Explore and categorize content based on specific criteria and keywords.
 Dataset
 The data for this project is sourced from the Kaggle dataset:
 
-Dataset Link: Movies Dataset
-Schema
+
+## Schema
+
+'''sql 
 DROP TABLE IF EXISTS netflix;
 CREATE TABLE netflix
 (
@@ -30,16 +31,23 @@ CREATE TABLE netflix
     listed_in    VARCHAR(250),
     description  VARCHAR(550)
 );
-Business Problems and Solutions
-1. Count the Number of Movies vs TV Shows
+'''
+## Business Problems and Solutions
+
+### 1. Count the Number of Movies vs TV Shows
+
+```sql 
 SELECT 
     type,
     COUNT(*)
 FROM netflix
 GROUP BY 1;
-Objective: Determine the distribution of content types on Netflix.
+```
+**Objective:** Determine the distribution of content types on Netflix.
 
-2. Find the Most Common Rating for Movies and TV Shows
+### 2. Find the Most Common Rating for Movies and TV Shows
+
+```sql
 WITH RatingCounts AS (
     SELECT 
         type,
@@ -61,15 +69,22 @@ SELECT
     rating AS most_frequent_rating
 FROM RankedRatings
 WHERE rank = 1;
-Objective: Identify the most frequently occurring rating for each type of content.
+```
+**Objective**: Identify the most frequently occurring rating for each type of content.
 
-3. List All Movies Released in a Specific Year (e.g., 2020)
+### 3. List All Movies Released in a Specific Year (e.g., 2020)
+
+```sql
 SELECT * 
 FROM netflix
 WHERE release_year = 2020;
-Objective: Retrieve all movies released in a specific year.
+```
 
-4. Find the Top 5 Countries with the Most Content on Netflix
+**Objective**: Retrieve all movies released in a specific year.
+
+### 4. Find the Top 5 Countries with the Most Content on Netflix
+
+```sql
 SELECT * 
 FROM
 (
@@ -82,23 +97,35 @@ FROM
 WHERE country IS NOT NULL
 ORDER BY total_content DESC
 LIMIT 5;
-Objective: Identify the top 5 countries with the highest number of content items.
+```
 
-5. Identify the Longest Movie
+**Objective**: Identify the top 5 countries with the highest number of content items.
+
+### 5. Identify the Longest Movie
+
+```sql
 SELECT 
     *
 FROM netflix
 WHERE type = 'Movie'
 ORDER BY SPLIT_PART(duration, ' ', 1)::INT DESC;
-Objective: Find the movie with the longest duration.
+```
 
-6. Find Content Added in the Last 5 Years
+**Objective**: Find the movie with the longest duration.
+
+### 6. Find Content Added in the Last 5 Years
+
+```sql
 SELECT *
 FROM netflix
 WHERE TO_DATE(date_added, 'Month DD, YYYY') >= CURRENT_DATE - INTERVAL '5 years';
-Objective: Retrieve content added to Netflix in the last 5 years.
+```
 
-7. Find All Movies/TV Shows by Director 'Rajiv Chilaka'
+**Objective**: Retrieve content added to Netflix in the last 5 years.
+
+### 7. Find All Movies/TV Shows by Director 'Rajiv Chilaka'
+
+```sql
 SELECT *
 FROM (
     SELECT 
@@ -107,26 +134,35 @@ FROM (
     FROM netflix
 ) AS t
 WHERE director_name = 'Rajiv Chilaka';
-Objective: List all content directed by 'Rajiv Chilaka'.
+```
 
-8. List All TV Shows with More Than 5 Seasons
+**Objective**: List all content directed by 'Rajiv Chilaka'.
+
+### 8. List All TV Shows with More Than 5 Seasons
+
+```sql
 SELECT *
 FROM netflix
 WHERE type = 'TV Show'
   AND SPLIT_PART(duration, ' ', 1)::INT > 5;
-Objective: Identify TV shows with more than 5 seasons.
+```
 
-9. Count the Number of Content Items in Each Genre
+**Objective**: Identify TV shows with more than 5 seasons.
+
+### 9. Count the Number of Content Items in Each Genre
+
+```sql
 SELECT 
     UNNEST(STRING_TO_ARRAY(listed_in, ',')) AS genre,
     COUNT(*) AS total_content
 FROM netflix
 GROUP BY 1;
-Objective: Count the number of content items in each genre.
+```
+**Objective**: Count the number of content items in each genre.
 
-10.Find each year and the average numbers of content release in India on netflix.
-return top 5 year with highest avg content release!
+### 10.Find each year and the average numbers of content release in India on netflix.return top 5 year with highest avg content release!
 
+```sql
 SELECT 
     country,
     release_year,
@@ -140,3 +176,4 @@ WHERE country = 'India'
 GROUP BY country, release_year
 ORDER BY avg_release DESC
 LIMIT 5;
+```
